@@ -1,0 +1,11 @@
+D:\projects\CSharp\ManchkinGameApi\bin\Debug\netcoreapp2.0\ManchkinGameApi.deps.json
+D:\projects\CSharp\ManchkinGameApi\bin\Debug\netcoreapp2.0\ManchkinGameApi.runtimeconfig.json
+D:\projects\CSharp\ManchkinGameApi\bin\Debug\netcoreapp2.0\ManchkinGameApi.runtimeconfig.dev.json
+D:\projects\CSharp\ManchkinGameApi\bin\Debug\netcoreapp2.0\ManchkinGameApi.dll
+D:\projects\CSharp\ManchkinGameApi\bin\Debug\netcoreapp2.0\ManchkinGameApi.pdb
+D:\projects\CSharp\ManchkinGameApi\obj\Debug\netcoreapp2.0\ManchkinGameApi.csprojAssemblyReference.cache
+D:\projects\CSharp\ManchkinGameApi\obj\Debug\netcoreapp2.0\ManchkinGameApi.csproj.CoreCompileInputs.cache
+D:\projects\CSharp\ManchkinGameApi\obj\Debug\netcoreapp2.0\ManchkinGameApi.AssemblyInfoInputs.cache
+D:\projects\CSharp\ManchkinGameApi\obj\Debug\netcoreapp2.0\ManchkinGameApi.AssemblyInfo.cs
+D:\projects\CSharp\ManchkinGameApi\obj\Debug\netcoreapp2.0\ManchkinGameApi.dll
+D:\projects\CSharp\ManchkinGameApi\obj\Debug\netcoreapp2.0\ManchkinGameApi.pdb
