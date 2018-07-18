@@ -6,22 +6,23 @@ using System.Threading.Tasks;
 using ManchkinGameApi.Models.Commands;
 namespace ManchkinGameApi.Models.Bot
 {
-    public class BotFactory
+    public static class BotFactory
     {        
-        private static Dictionary<string,Bot> BotsContainer = new Dictionary<string,Bot>();    
-        public static async Task<TelegramBotClient> Initiate(BotSettings botSettings)
+        public static bool isTest = false;
+        private static Dictionary<BotEnum,Bot> BotsContainer = new Dictionary<BotEnum,Bot>();    
+        public static async Task<ClientWrapper> Initiate(BotSettings botSettings)
         {   
             Bot bot = new Bot(botSettings);
-            BotsContainer.Add(botSettings.Name,bot);               
-            return await BotsContainer[botSettings.Name].GetClient();
+            BotsContainer.Add(botSettings.BotType,bot);               
+            return new ClientWrapper(await BotsContainer[botSettings.BotType].GetClient(),isTest);
         }
         
-        public static async Task<TelegramBotClient> Get(string botName) {
-            return await BotsContainer[botName].GetClient();
+        public static async Task<ClientWrapper> Get(BotEnum bot) {
+            return new ClientWrapper(await BotsContainer[bot].GetClient(),isTest);
         }
-        public static List<Command> GetCommands(string botName)
+        public static List<Command> GetCommands(BotEnum bot)
         {
-            return BotsContainer[botName].Commands;
+            return BotsContainer[bot].Commands;
         }
     }
 }

@@ -16,41 +16,41 @@ namespace ManchkinGameApi.Controllers
          [HttpPost]
         public async Task<OkResult> ManchkinGame([FromBody]Update update)
         {
-            string botName = (new ManckinGameBotSettings()).Name;
-            var client = await BotFactory.Get(botName);                      
-            var message = update.Message;
-            try
-            {                
-                ExecuteCommand(botName,update,client);                
-            } 
-            catch(StateNotAllowException ex)
-            {
-                ManchkinGameApi.Exeptions.ErrorSender.SendExeptionMessage(ex.Message,message.Chat.Id,client);
-            } 
-            catch(GameExistExeption ex) 
-            {  
-                ManchkinGameApi.Exeptions.ErrorSender.SendExeptionMessage(ex.Message,message.Chat.Id,client);
-            } catch { Console.WriteLine("Unknown exeption manchin Bot Action");} 
+            var client = await BotFactory.Get(BotEnum.GameBot);                      
+                           
+            
+            ExecuteCommand(BotEnum.GameBot,update,client);                
+            
+            
             return new OkResult();
         }
         [HttpPost]
         public async Task<OkResult> ManchkinHand([FromBody]Update update)
         {
-            string botName = (new ManckinGameBotSettings()).Name;
-            var client = await BotFactory.Get(botName);                      
+            
+            var client = await BotFactory.Get(BotEnum.HandBot);                      
             var message = update.Message;
-            try
-            {                
-                ExecuteCommand(botName,update,client);                
-            } 
-            catch{Console.WriteLine("Unknown exeption manchin Hand Action");}
+                           
+                ExecuteCommand(BotEnum.HandBot,update,client);                
+            
             return new OkResult();
         }
-        private void ExecuteCommand(string botName,Update update,Telegram.Bot.TelegramBotClient client)
-        {            
-            var commands = BotFactory.GetCommands(botName);  
-            var message = update.Message;
-            foreach(var command in commands)
+        private void ExecuteCommand(BotEnum bot,Update update,ClientWrapper client)
+        {    
+            var commands = BotFactory.GetCommands(bot);  
+            Message message;
+            if(update.Message != null){ // check if request is command or button
+                message = update.Message; // for command
+            }else{
+                message = update.CallbackQuery.Message;   // for press button
+                message.Text = update.CallbackQuery.Data.ToString();  // in CallbackQuery message.Text == press button,
+                                                                    // change press button to command
+            }
+
+            try
+            { 
+                
+                foreach(var command in commands)
                 {                
                     if(command.Contains(message.Text))
                     {
@@ -59,6 +59,21 @@ namespace ManchkinGameApi.Controllers
                         break;
                     }
                 }
+                
+            }
+
+            catch(DefautlMesageException ex)
+            {
+                 ManchkinGameApi.Exeptions.ErrorSender.SendExeptionMessage(ex.Message,message.Chat.Id,client);
+            }
+            catch(StateNotAllowException ex)
+            {
+                ManchkinGameApi.Exeptions.ErrorSender.SendExeptionMessage(ex.Message,message.Chat.Id,client);
+            } 
+            catch(GameExistExeption ex) 
+            {  
+                ManchkinGameApi.Exeptions.ErrorSender.SendExeptionMessage(ex.Message,message.Chat.Id,client);
+            } //catch(Exception ex) {Console.WriteLine(ex.Message); } 
         }
         
     }

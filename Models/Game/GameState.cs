@@ -2,12 +2,19 @@ using System;
 namespace ManchkinGameApi.Models.Game
 {
     public enum GameState{
-        Preparation = 0b0000_0001,
-        StartGame= 0b0000_0010,
-        KickDoor = 0b0000_0100,
-        LookRoom = 0b0000_1000,
-        LookTrable = 0b0001_0000,
-        Charity = 0b0010_0000
+        None=0,
+        Preparation=1,
+        StartTurn=4,
+        KickDoor=8,
+        Fight=16,
+        LookRoom=32,
+        LookTrable=64,
+        Charity=128,
+        WashOut=256,
+        All = Preparation | StartTurn | KickDoor
+            | Fight| LookRoom| LookTrable| Charity| WashOut,
+        Play = StartTurn | KickDoor
+            | Fight| LookRoom | LookTrable| Charity| WashOut
 
     }
 }
