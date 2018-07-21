@@ -12,7 +12,7 @@ namespace ManchkinGameApi.Models.Game.Player
 {
     public class PlayerProfile
     {
-        private Game game{get;}
+        public Game game{get;}
         public string UserName {get;}
         public long chatId{get; set;}
         public int Level {get;private set;}=1;
@@ -23,8 +23,10 @@ namespace ManchkinGameApi.Models.Game.Player
         ClassHendler Class = new ClassHendler();
         RaceHendler Race = new RaceHendler();
         List<Card> PlayerHand {get;} = new List<Card>();
+        public ItemSellHendler SellHendler;
         int maxCardCount = GameParams.MaxCardsInHand;
         public long HandBotChatId{get;set;}
+        
         public PlayerProfile(Game game,string userName)
         {
             this.game = game;
@@ -40,10 +42,13 @@ namespace ManchkinGameApi.Models.Game.Player
             Class.SetClass(ce,cardId);
             Statistics.IsClassChanged = true;
         }
-        public void DropClass(ClassEnum ce,int cardId)
+        public void DropClass(ClassEnum ce)
         {
-            Class.DropClass(ce,cardId);
-            //todo drop card
+            var cardId = Class.DropClass(ce);
+            var card = CardsList.GetCard(cardId);
+            game.ToStock(card);
+            
+            
         }
 #endregion
 #region Items
@@ -56,38 +61,44 @@ namespace ManchkinGameApi.Models.Game.Player
                 throw new DefautlMesageException("Эта шмотка вам не подходит");
 
         }
+        
 #endregion   
 #region Cards
         public List<Card> GetHand()
         {
             return PlayerHand.ToList();
         }
+        public bool HasCard(Card card){
+            return PlayerHand.Contains(card);
+        }
        
         public List<Card> GetEffects(){return null;}
 
         public List<Card> GetItems(BodyPartsEnum bp)
         {
-           
             List<Card> cards = new List<Card>();
-            foreach(var card in Items.getBodyPart(bp).getItemsID())
+            foreach(var card in Items.getBodyPart(bp).getItems())
             {
                cards.Add(card as Card);
             }
             return cards;
         }
 #endregion
-        public int getDmg(){
+        public int getDmg(bool useItems= true){
             var dmg = this.Level;
-            dmg += Items.getDmg();
+            if(useItems)
+                dmg += Items.getDmg();
             return dmg;
         }
         
         public PlayerStatistic GetPlayerStatistic(){return Statistics;}
         
-        public void LevelUp(){
-            if(Level>GameParams.MaxLevel-1) throw new DefautlMesageException("Последний уровент нужно добыть в собственом бою");
-            Level+=1;
-            Console.WriteLine("levelup");
+        public void LevelUp(int levels=1,bool fightLvl = false){
+            if(levels<0) throw new Exception("level must be positiv");
+            Level+=levels;
+            if(!fightLvl)
+                if(Level>=GameParams.MaxLevel) throw new DefautlMesageException("Последний уровент нужно добыть в собственом бою");
+            if(Level==10){GameBotFunctions.SendMessage(chatId,"@"+UserName+" win");} //todo win func
         }
         public Card TakeCard(Card card){
             this.PlayerHand.Add(card);
@@ -119,10 +130,20 @@ namespace ManchkinGameApi.Models.Game.Player
         {
             return Race.isRace(re,badEffect);
         }
-        public void LostItem(BodyPartsEnum bp,bool isBig=false,int count=1)
+        private void InLostItem(List<ItemCard> list,int count)
         {
-            var list = Items.LostItemList(bp,isBig,count);
-            
+            if(count == -1) // lost all 
+            {
+                HandBotFunctions.SendCards(HandBotChatId,list,"Вы теряете:");
+                
+                var cardList = new List<Card>();
+                foreach (var card in list)
+                {
+                    Items.TakeOfItem(card);
+                    game.ToStock(card);
+                    GameBotFunctions.ShowUserCard(chatId,card,"@"+UserName+"теряет :");
+                }
+            }
             if(list.Count <= count && list.Count >= 1)
             {                
                 HandBotFunctions.SendCards(HandBotChatId,list,"Вы теряете:");
@@ -130,12 +151,61 @@ namespace ManchkinGameApi.Models.Game.Player
                 var cardList = new List<Card>();
                 foreach (var card in list)
                 {
-                    game.ToStock(card,this.UserName);
+                    Items.TakeOfItem(card);
+                    game.ToStock(card);
                     GameBotFunctions.ShowUserCard(chatId,card,"@"+UserName+"теряет :");
                 }
                
             }
             //todo chouse
         }
+       
+        public void LostItem(int count=1)
+        {
+            var list = Items.ItemList();
+            InLostItem(list,count);
+        }
+        public void LostItem(BodyPartsEnum bp,int count=1) {
+            var list = Items.ItemList(bp);
+            InLostItem(list,count);
+        }
+        public void LostItem(BodyPartsEnum bp,bool isBig,int count=1)
+        {
+            var list = Items.ItemList(bp,isBig);
+            InLostItem(list,count);
+           
+        }
+        public void LostLevel(int levels)
+        {
+            Level -= levels;
+            if(Level<1) Level = 1;
+        }
+        public void LostCard(int count)
+        {
+            if(count == -1)
+            foreach(var card in PlayerHand.ToList())
+            {
+                Discard(card);
+                game.ToStock(card);
+            }
+            //todo chouse discard
+        }
+        public List<Card> Death()
+        {
+            var items = Items.ItemList();
+            foreach(var item in items)
+            {
+                this.Items.TakeOfItem(item);
+            }
+            var handCards = PlayerHand;
+            PlayerHand.Clear();
+            
+            var cards = new List<Card>();
+            cards.AddRange(items);
+            cards.AddRange(handCards);
+            return cards;
+            
+           
+        } 
     }
 }

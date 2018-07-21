@@ -33,9 +33,37 @@ namespace ManchkinGameApi.Models.Game.Player.Items
             }
             return dmg;
         }
-        public List<ItemCard> LostItemList(BodyPartsEnum bp,bool isBig=false,int count=1)
+        public List<ItemCard> ItemList(BodyPartsEnum bp,bool isBig=false)
         {
-           return ItemContainer[bp].GetLostItem(); //todo diffent item types
+            var list = new List<ItemCard>();
+            foreach(var item in ItemContainer)
+            {
+                if((bp&item.Key)!=0)
+                    list.AddRange(ItemContainer[item.Key].GetItems());
+
+            }
+           return list; //todo diffent item types
+        }
+        public List<ItemCard> ItemList(BodyPartsEnum bp)
+        {
+            var list = new List<ItemCard>();
+            foreach(var item in ItemContainer)
+            {
+                if((bp&item.Key)!=0)
+                    list.AddRange(ItemContainer[item.Key].GetItems());
+
+            }
+           return list; 
+        }
+        public List<ItemCard> ItemList()
+        {
+            var list = new List<ItemCard>();
+            foreach(var item in ItemContainer)
+            {
+                list.AddRange(ItemContainer[item.Key].GetItems());
+
+            }
+           return list; 
         }
         public void TakeOfItem(ItemCard item)
         {

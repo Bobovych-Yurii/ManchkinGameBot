@@ -6,17 +6,17 @@ using ManchkinGameApi.Models.Game;
 using ManchkinGameApi.Models.Bot;
 namespace ManchkinGameApi.Models.Commands
 {
-    public class SellCard:Command
+    public class Chouse:Command
     {
-        public SellCard():base(CommandsInfo.SellCard.StateAllow, CommandsInfo.SellCard.Name,CommandsInfo.SellCard.Command){}
+        public Chouse():base(CommandsInfo.Chouse.StateAllow, CommandsInfo.Chouse.Name,CommandsInfo.Chouse.Command){}
         public override  void Execute(Message message,ClientWrapper client){
             var chatId = message.Chat.Id;  
             var userName = message.Chat.Username;          
             var mainChatId = GamesFactory.GetMainChatId(userName);           
             var game = GamesFactory.GetGame(mainChatId); 
-            var cardId = GetParameters(message.Text);
-            if(!cardId.MoveNext()) throw new DllNotFoundException("что-то пошло не так с продажей");
-            game.GetProfile(userName).SellHendler.Add(cardId.Current);
+            var choseInex = GetParameters(message.Text);
+            if(!choseInex.MoveNext()) throw new DllNotFoundException("что-то пошло не так с выбором");
+            game.Chouse.MakeChouse(game.GetProfile(userName),choseInex.Current);
             //todo message
         }   
          

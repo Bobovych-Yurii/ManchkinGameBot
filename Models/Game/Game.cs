@@ -11,6 +11,8 @@ using ManchkinGameApi.Models.Game.Cards.Tresure;
 using ManchkinGameApi.Models.Game.Cards.Doors;
 using ManchkinGameApi.Models.Game.Fight;
 using ManchkinGameApi.Models.Game.Player.Class;
+using ManchkinGameApi.Models.Game.Player.Items;
+
 namespace ManchkinGameApi.Models.Game
 {
     public class Game
@@ -20,6 +22,7 @@ namespace ManchkinGameApi.Models.Game
         
         public long ChatId {get;private set;}
         public GameState GameState = GameState.Preparation;
+        public Chouse Chouse = new Chouse();
         private DeckHendler deckHendler = new DeckHendler();
         private PlayerTurnQueue turnQueur = new PlayerTurnQueue();
         private FightHendler fightHendler;
@@ -40,22 +43,28 @@ namespace ManchkinGameApi.Models.Game
                 throw new DefautlMesageException("вы уже заняли место в игре ");
             }
         }
+        public void GetStartHand(PlayerProfile pp)
+        {
+            for(int i=0; i < GameParams.StartCardsCount/2;i++){
+                    
+                    Card resived = pp.TakeCard(deckHendler.GetTresureCard());
+                    if(resived is TresureCard) deckHendler.TresureCardResived(resived as TresureCard);
+
+                    resived = pp.TakeCard(deckHendler.GetDoorCard());
+                    if(resived is DoorCard) deckHendler.DoorCardResived(resived as DoorCard);
+                }
+        }
         public void SetHandBot(long playerChatId,string playerName)
         {
             var tempPp = players.Where(pp =>pp.UserName == playerName).First();
             if(!tempPp.GetPlayerStatistic().IsStartCardsTaken)
             {
                 tempPp.HandBotChatId = playerChatId;
-                for(int i=0; i < GameParams.StartCardsCount;i++){
-                    
-                    var resived = tempPp.TakeCard(deckHendler.GetTresureCard());
-                    if(resived as TresureCard !=null) deckHendler.TresureCardResived(resived as TresureCard);
-                    //todo give 4 door cards
-                }
+                GetStartHand(tempPp);
             
-            HandBotFunctions.SendHand(playerChatId,tempPp.GetHand());
-            tempPp.GetPlayerStatistic().IsStartCardsTaken = true;
-            tempPp.PlayerState = PlayerState.Iddle;
+                HandBotFunctions.SendHand(playerChatId,tempPp.GetHand());
+                tempPp.GetPlayerStatistic().IsStartCardsTaken = true;
+                tempPp.PlayerState = PlayerState.Iddle;
             }else{
                 HandBotFunctions.SendMessage(playerChatId,"вы авторизовались");
             }
@@ -63,6 +72,7 @@ namespace ManchkinGameApi.Models.Game
             if(PlayersReady == players.Count)
             {
                 turnQueur.Current().PlayerState = PlayerState.OwnTurn;
+                turnQueur.Current().SellHendler = new ItemSellHendler(turnQueur.Current());
                 HandBotFunctions.SendKeyboadrd(turnQueur.Current().HandBotChatId,GameState,PlayerState.OwnTurn);
             }
             
@@ -75,6 +85,23 @@ namespace ManchkinGameApi.Models.Game
         { 
             GameState = GameState.StartTurn;
             return GameId;
+        }
+        public void SartTurn()
+        {
+            
+            GameState = GameState.StartTurn;
+            var current = turnQueur.Next();
+            
+            if(current.GetPlayerStatistic().IsDead == true)
+            {
+                GetStartHand(current);
+                current.GetPlayerStatistic().IsDead = false;
+            }
+            current.PlayerState = PlayerState.OwnTurn;
+            GameBotFunctions.SendMessage(ChatId,"Начинаеться ход @"+current.UserName);
+            HandBotFunctions.SendMessage(current.HandBotChatId,"Твой ход");
+            HandBotFunctions.SendKeyboadrd(current.HandBotChatId,GameState,current.PlayerState);
+            current.SellHendler = new ItemSellHendler(current);
         }
 
         public PlayerProfile GetCurrnetPlayer()
@@ -91,8 +118,12 @@ namespace ManchkinGameApi.Models.Game
             }
             return playersLevel;
         }
-        public void ToStock(Card card,string playerName){
+        public void Discard(Card card,string playerName,bool toStock = false){
+            if(toStock)
+                deckHendler.ToStock(card);
             players.Where(p=>p.UserName == playerName).First().Discard(card);
+        }
+        public void ToStock(Card card){
             deckHendler.ToStock(card);
         }
 
@@ -100,15 +131,10 @@ namespace ManchkinGameApi.Models.Game
         {
             return deckHendler.GetDoorCard();
         }
-        public void KickDoor()
+        public void PlayEnemy(EnemyCard card)
         {
-            GameState = GameState.KickDoor;
-            turnQueur.Current().PlayerState = PlayerState.Fight;
-            var card = deckHendler.GetDoorCard();
-            //todo otherecard type
-            if(card.CardType == CardType.Enemy)
-            {
                 GameState = GameState.Fight;
+                turnQueur.Current().SellHendler = null;
                 var minorPlayers = new List<PlayerProfile>();
                 foreach (var player in players)
                 {
@@ -124,6 +150,38 @@ namespace ManchkinGameApi.Models.Game
                 GameBotFunctions.ShowUserCard(ChatId,card,temp);
                 HandBotFunctions.SendCards(turnQueur.Current().HandBotChatId,new List<Card>(){card},"Вы стажаетесь с","card",
                     HandBotFunctions.GetMainPlayerKeyboard(GameState,turnQueur.Current().PlayerState));
+        }
+        public void KickDoor()
+        {
+            turnQueur.Current().SellHendler.IsEmpty(true);
+
+            GameState = GameState.KickDoor;
+            turnQueur.Current().PlayerState = PlayerState.Fight;
+            var card = deckHendler.GetDoorCard();
+            //todo otherecard type
+            
+            if(card.CardType == CardType.Enemy)
+            {
+                PlayEnemy(card as EnemyCard);
+                
+            } else if(card.CardType == CardType.Curse){
+                //play curse
+
+                GameState = GameState.LookTrable;
+                turnQueur.Current().PlayerState = PlayerState.LookTrable;
+                var temp = "@"+turnQueur.Current().UserName+" проклят"; 
+                GameBotFunctions.ShowUserCard(ChatId,card,temp);
+                HandBotFunctions.SendCards(turnQueur.Current().HandBotChatId,new List<Card>(){card},"ты получаешь карту","card",
+                    HandBotFunctions.GetMainPlayerKeyboard(GameState,turnQueur.Current().PlayerState));
+            } else {
+                turnQueur.Current().TakeCard(card);
+               
+                GameState = GameState.LookTrable;
+                turnQueur.Current().PlayerState = PlayerState.LookTrable;
+                var temp = "@"+turnQueur.Current().UserName+" получат карту";
+                GameBotFunctions.ShowUserCard(ChatId,card,temp);
+                HandBotFunctions.SendCards(turnQueur.Current().HandBotChatId,new List<Card>(){card},"ты получаешь карту","card",
+                    HandBotFunctions.GetMainPlayerKeyboard(GameState,turnQueur.Current().PlayerState));
             }
         }
         public void FinishFight(){
@@ -134,6 +192,10 @@ namespace ManchkinGameApi.Models.Game
             { // win
             fightHendler.Win();
             GameState = GameState.Charity;
+            turnQueur.Current().PlayerState = PlayerState.Charity;
+            turnQueur.Current().SellHendler = new ItemSellHendler(turnQueur.Current());
+            GameBotFunctions.SendMessage(ChatId,"Бой закончен");
+
             } else {//lost
                 fightHendler.Lost();
                 
@@ -145,6 +207,10 @@ namespace ManchkinGameApi.Models.Game
             if(fightHendler == null) throw new DefautlMesageException("Сейчас не идет бой");
             
             HandBotFunctions.SendMessage(chatId,fightHendler.Count());
+        }
+        public List<PlayerProfile> PlayersList()
+        {
+            return players;
         }
         public List<PlayerProfile> PlayersList(string userName)
         {
@@ -158,9 +224,9 @@ namespace ManchkinGameApi.Models.Game
             }
             return pps;
         }
-        public bool UseBuffCard(BuffCard card)
+        public bool UseBuffCard(EnemyBuffCard card)
         {   
-            if(fightHendler == null) throw new DefautlMesageException("Сейчас не идет бой");
+            if(fightHendler == null || GameState != GameState.Fight) throw new DefautlMesageException("Сейчас не идет бой");
             fightHendler.UseBuff(card);
             return false;
         }
@@ -170,7 +236,7 @@ namespace ManchkinGameApi.Models.Game
             {
                 case CardType.Tresure:
                     var resived = pp.TakeCard(deckHendler.GetTresureCard());            
-                    if(resived as TresureCard !=null)
+                    if(resived as TresureCard != null)
                     {
                         deckHendler.TresureCardResived(resived as TresureCard);
                         HandBotFunctions.SendCards(pp.HandBotChatId,new List<Card>{resived},"Берете карту");
@@ -180,7 +246,7 @@ namespace ManchkinGameApi.Models.Game
                         }
                     }
                     break;
-                default: throw new Exception();
+                default: throw new DefautlMesageException("wtf 1");
             }
             
             
@@ -191,30 +257,34 @@ namespace ManchkinGameApi.Models.Game
             washOutHandler = new WashOutHandler(this,lostPlayers,enemy);
             foreach (var pp in lostPlayers)
             {
-               pp.PlayerState = PlayerState.WashOut;
+                pp.PlayerState = PlayerState.WashOut;
                 var temp = "Приготовтесь к смывке\n"+washOutHandler.GetMessage();
                 HandBotFunctions.SendMessage(pp.HandBotChatId,temp);
                 HandBotFunctions.SendKeyboadrd(pp.HandBotChatId,GameState,pp.PlayerState);
             }   
         }
-        public void FinishWashOut(PlayerProfile pp)
+        public void FinishWashOut(PlayerProfile pp,bool fromLostFunc=false)
         {
-            var finish = washOutHandler.Finish(pp);
+            var finish = washOutHandler.Finish(pp,fromLostFunc);
             if(finish)
             {
-                GameState = GameState.Charity;
+                pp.SellHendler = new ItemSellHendler(pp);
+                GameState = GameState.Charity; 
                 HandBotFunctions.SendMessage(GetCurrnetPlayer().HandBotChatId,"Можешь сыграть свои карты");
                 GameBotFunctions.SendMessage(ChatId,"Бой закончен");
                 HandBotFunctions.SendKeyboadrd(pp.HandBotChatId,GameState,pp.PlayerState);
             }
         }
+        
         public void FinishCharity(PlayerProfile pp)
         {
+            pp.SellHendler.IsEmpty();
+            
             var maxCard = GameParams.MaxCardsInHand;
             if(pp.isClass(ClassEnum.Warior)) maxCard+=1;
             if(pp.GetHand().Count <= maxCard)
             {
-
+                
                 HandBotFunctions.SendMessage(pp.HandBotChatId,"Твой ход закончен");
                 pp.PlayerState = PlayerState.Iddle;
                 var finish = true;
@@ -227,15 +297,10 @@ namespace ManchkinGameApi.Models.Game
                 }
                 if(finish)
                 {
-                    GameState = GameState.StartTurn;
-                    turnQueur.Next();
-                    var current = turnQueur.Current();
-                    current.PlayerState = PlayerState.OwnTurn;
-                    GameBotFunctions.SendMessage(ChatId,"Начинаеться ход @"+current.UserName);
-                    HandBotFunctions.SendMessage(current.HandBotChatId,"Твой ход");
+                    SartTurn();
                 } else {
                     HandBotFunctions.SendMessage(pp.HandBotChatId,"Ещё не все закончили свой ход");
-                    
+                    pp.SellHendler = null;
                 }
                     
             } else {

@@ -28,9 +28,11 @@ namespace ManchkinGameApi.Models.Functions
         
 #region InlineKeyBoards
 
-        public static void SendCards(long chatId,IEnumerable<Card> cards,string header="_",string futter="card",ReplyKeyboardMarkup rkm=null)
+        public static void SendCards(long chatId,IEnumerable<Card> cards,string header="",string futter="card",ReplyKeyboardMarkup rkm=null)
         {
             var isFirst = true;
+            if(header != "")
+                HandBotFunctions.SendMessage(chatId,header);
             foreach(var card in cards)
             {
                 if(isFirst)
@@ -159,16 +161,20 @@ namespace ManchkinGameApi.Models.Functions
             case(PlayerState.OwnTurn):
                 return new KeyboardButton[]
                 {
-                    new KeyboardButton("sell"),
+                    new KeyboardButton(Commands.CommandsInfo.SellMenu.Command),
                     new KeyboardButton(Commands.CommandsInfo.KickDoor.Command)
+                };   
+            case(PlayerState.LookTrable):
+                return new KeyboardButton[]
+                {
+                    new KeyboardButton("Чистить нычки"), 
                 };
-
             case(PlayerState.Fight):
                 return new KeyboardButton[]
                 {
                     new KeyboardButton(Commands.CommandsInfo.CountFight.Command),
                     new KeyboardButton(Commands.CommandsInfo.CallHelp.Command),
-                    new KeyboardButton(Commands.CommandsInfo.FinishFight.Command) //todo
+                    new KeyboardButton(Commands.CommandsInfo.FinishFight.Command) 
                 };
             case(PlayerState.WashOut):
                 return new KeyboardButton[]
@@ -179,10 +185,11 @@ namespace ManchkinGameApi.Models.Functions
             case(PlayerState.Charity):
                 return new KeyboardButton[]
                 {
-                    new KeyboardButton("sell"),
+                    new KeyboardButton(Commands.CommandsInfo.SellMenu.Command),//todo
                     new KeyboardButton(Commands.CommandsInfo.EndTurn.Command),
                 };
-           // case(PlayerState.Iddle)://todo outter case for all gameStates
+            case(PlayerState.Iddle):
+                return GetMinorPlayerKeyboard(gs);
              
             default:
                 return new KeyboardButton[]{};
@@ -199,7 +206,7 @@ namespace ManchkinGameApi.Models.Functions
                 };
                 
             default:
-                return null;
+                return new KeyboardButton[]{};
         }
     }
 #endregion   

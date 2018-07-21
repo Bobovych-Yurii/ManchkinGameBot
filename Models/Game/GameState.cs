@@ -11,10 +11,13 @@ namespace ManchkinGameApi.Models.Game
         LookTrable=64,
         Charity=128,
         WashOut=256,
+        OwnTurn = StartTurn | Charity,
         All = Preparation | StartTurn | KickDoor
-            | Fight| LookRoom| LookTrable| Charity| WashOut,
+            | Fight| LookRoom| LookTrable| Charity
+            | WashOut |OwnTurn,
         Play = StartTurn | KickDoor
-            | Fight| LookRoom | LookTrable| Charity| WashOut
+            | Fight| LookRoom | LookTrable | Charity 
+            | WashOut | OwnTurn
 
     }
 }

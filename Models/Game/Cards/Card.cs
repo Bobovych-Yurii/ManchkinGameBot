@@ -24,18 +24,21 @@ namespace ManchkinGameApi.Models.Game.Cards
         }   
         public void Play(Game game,string PlayerUserName)
         {
-            if((game.GameState&GameState) == 0) throw new  DefautlMesageException("нельзя сыграть карту сейчас");
+            Console.WriteLine(game.GameState + "   "+ game.GameState);
+            if((game.GameState&game.GameState) == 0) throw new  DefautlMesageException("нельзя сыграть карту сейчас");
             if(game.GameState == GameState && game.GetCurrnetPlayer().UserName != PlayerUserName) 
                 throw new DefautlMesageException("карту можно использоваь только в свой ход");
                 
             InPlay(game,PlayerUserName);
-            if(this.CardType != CardType.Enemy)
-                game.ToStock(this,PlayerUserName); //todo discardEnemy
+            if((this.CardType & CardType.Enemy|CardType.Buff)==0)
+                game.Discard(this,PlayerUserName); //todo discardEnemy
+            else
+                game.Discard(this,PlayerUserName,true);
             GameBotFunctions.ShowUserCard(game.ChatId,this,"@"+PlayerUserName+" сыграл");
             
         }
         protected bool isPlayerTurn(Player.PlayerProfile currentpp ,string player){
-            if( currentpp.UserName != player) throw new DefautlMesageException("можно сыграть только в свой ход пере и после боя");
+            if( currentpp.UserName != player) throw new DefautlMesageException("можно сыграть только в свой ход перед и после боя");
             return true;
         }
         protected abstract void InPlay(Game game, string PlayerUserName);

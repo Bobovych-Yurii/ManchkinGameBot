@@ -10,15 +10,31 @@ namespace ManchkinGameApi.Models.Game.Cards.Doors
         private BodyPartsEnum bp;
         private int count;
         private bool isBig;
-        public LostItemFunction(BodyPartsEnum bp,int count=1,bool isBig=false)
+        private bool isBigSet;
+        public LostItemFunction(BodyPartsEnum bp,bool isBig,int count=1)
         {
             this.bp = bp;
             this.count = count;
             this.isBig = isBig;
+            this.isBigSet = true;
         }
-        public void LostItem(PlayerProfile pp)
+        public LostItemFunction(BodyPartsEnum bp,int count=1)
         {
-            pp.LostItem(bp,isBig,count);
+            this.bp = bp;
+            this.count = count;
+        }
+        public LostItemFunction(int count=1)
+        {
+            this.count = count;
+        }
+        public bool LostItem(PlayerProfile pp)
+        {
+            if(bp == null)
+                pp.LostItem();
+            else if(isBigSet)
+                pp.LostItem(bp,isBig,count);
+            else pp.LostItem(bp,count);
+            return true;
         }
     }
 }

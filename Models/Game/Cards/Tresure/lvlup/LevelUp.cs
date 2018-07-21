@@ -18,7 +18,6 @@ namespace ManchkinGameApi.Models.Game.Cards.Tresure
             {
                 pp.LevelUp();
             }
-            
         }
     }
 }

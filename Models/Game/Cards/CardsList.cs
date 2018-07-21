@@ -11,6 +11,7 @@ namespace ManchkinGameApi.Models.Game.Cards
         private static List<Card> cardsList = new List<Card>();
         static CardsList()
         {
+            
             addTresure();
             addDoors();
         }
@@ -18,11 +19,38 @@ namespace ManchkinGameApi.Models.Game.Cards
         public static Card GetCard(int id){ return cardsList.Find(c=>c.Id == id);}
 #region setupCards  
         private static void addDoors(){       
-            addEnemy();     
+            addEnemy();   
+            addEnemyBuff();  
+        }
+        private static void addEnemyBuff()
+        {
+            cardsList.AddRange(new List<Card>(){
+                new EnemyBuffCard("brain"),
+                new EnemyBuffCard("bigone"),
+                new EnemyBuffCard("child"),
+                new EnemyBuffCard("crazy")
+                });
         }
         private static void addEnemy(){
             cardsList.AddRange(new List<Card>(){
-                new EnemyCard("bigfoot")});
+                new EnemyCard("duck_monster"),
+                new EnemyCard("dice"),
+                new EnemyCard("bigfoot"),
+                new EnemyCard("bull"), 
+                new EnemyCard("elder_dragon"),
+                new EnemyCard("cochlea"),
+                new EnemyCard("dog"),
+                new EnemyCard("drank_golem"),
+                new EnemyCard("face"),
+                new EnemyCard("fear"),
+                new EnemyCard("frogs"),
+                new EnemyCard("girls"),
+                new EnemyCard("gish"),
+                new EnemyCard("goblin"),
+                new EnemyCard("grass"),
+                new EnemyCard("griffin"),
+                new EnemyCard("harpy"),
+                });
         }
         private static void addTresure()
         {

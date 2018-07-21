@@ -3,6 +3,7 @@ namespace ManchkinGameApi.Models.Game.Player.Race
 {
     public enum RaceEnum
     {
+        None = 0,
         Humman=1,
         Dwarf=2,
         Elf=4,

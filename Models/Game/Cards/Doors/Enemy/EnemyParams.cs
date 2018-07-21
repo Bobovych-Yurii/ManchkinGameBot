@@ -10,12 +10,13 @@ namespace ManchkinGameApi.Models.Game.Cards.Doors
         public int Level;
         public int WinLevelsCount;
         public int WinTresureCount;
-        public Action<PlayerProfile> LostFunction;
+        public Func<PlayerProfile,bool> LostFunction;
         public Func<PlayerProfile,int> FightBuff; 
+        public Func<PlayerProfile,int> WasOut;
 
         public EnemyParams(string name,int id,string gameImagePath,CardType ct,GameState gs,
             CardUsage cu,int level,int winLevelsCount,int winTresureCount,
-            Action<PlayerProfile>lostFunction,Func<PlayerProfile,int> fightBuff)
+            Func<PlayerProfile,bool> lostFunction,Func<PlayerProfile,int> fightBuff,Func<PlayerProfile,int> wasOut)
             :base(name,id,gameImagePath,ct,gs,cu)
         {
             this.Level = level;
@@ -23,6 +24,7 @@ namespace ManchkinGameApi.Models.Game.Cards.Doors
             this.WinTresureCount = winTresureCount;
             this.LostFunction = lostFunction;
             this.FightBuff = fightBuff;
+            this.WasOut = wasOut;
         }
     }
 }

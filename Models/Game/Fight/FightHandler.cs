@@ -58,8 +58,11 @@ namespace ManchkinGameApi.Models.Game.Fight
                    throw new DefautlMesageException("Не все игроки готовы");
                 }  
             }
+            var buff = enemy.FightBuff(fightPlayer);
+            var noItems  = buff == GameParams.NoItemsFightBuff ? true : false;  
+
             var enemyDmg = EnemyDmg();
-            var mainDmg = PlayerDamage(fightPlayer);
+            var mainDmg = PlayerDamage(fightPlayer,false);
             var helpDmg=0;
             if(helperPlayer != null)
             {
@@ -78,12 +81,31 @@ namespace ManchkinGameApi.Models.Game.Fight
             if(ishelperPlayer) 
                 helperPlayer.PlayerState = PlayerState.Iddle;
             
-            for(int i=0;i<enemy.WinLevelsCount;i++)
+            var enemies = new List<EnemyCard>();
+            enemies.Add(enemy);
+            enemies.AddRange(ExtraEnemy);
+            var lvls = 0;
+            var treasure = 0;
+            foreach(var winedEnemy in enemies)
             {
-                fightPlayer.LevelUp();
+                lvls += winedEnemy.WinLevelsCount;
+                treasure = winedEnemy.WinTresureCount;
+                var templevels = 0;
+                var temptreasure = 0;
+                foreach(var buffcard in winedEnemy.baffs)
+                {
+                    templevels+=buffcard.WinLevelsCount;
+                    temptreasure=buffcard.WinTresureCount;
+                }
+                if(temptreasure >0)
+                    treasure += temptreasure;
+                if(templevels > 0)
+                    lvls += templevels;
             }
+            fightPlayer.LevelUp(lvls,true);
             
-            for(int i=0;i<enemy.WinTresureCount;i++)
+            Console.WriteLine(treasure+"Tresure");
+            for(int i=0;i<treasure;i++)
             {
                 thisGame.PlayerTakeCard(fightPlayer,Cards.CardType.Tresure,ishelperPlayer);
             }
@@ -100,10 +122,10 @@ namespace ManchkinGameApi.Models.Game.Fight
             }
             thisGame.StartWashOut(pps,enemyList);
         }
-        public bool UseBuff(BuffCard buff)
+        public bool UseBuff(EnemyBuffCard buff)
         {
-            if(enemy == null) throw new DefautlMesageException("");
-            if(ExtraEnemy != null) throw new Exception("to do EnemyCard UseBuff");//todo if many enemy
+            if(enemy == null) throw new DefautlMesageException("Нет мостров");
+            if(ExtraEnemy != null) throw new DefautlMesageException("to do EnemyCard UseBuff");//todo if many enemy /// exception
             enemy.AddBuff(buff);
             return true;
         }
@@ -112,7 +134,6 @@ namespace ManchkinGameApi.Models.Game.Fight
         private int EnemyDmg()
         {
             var isbuffed = false;
-
             var enemyDmg = enemy.Level;
             var buff = enemy.FightBuff(fightPlayer);
             if(buff == 0 && helperPlayer != null)
@@ -120,11 +141,15 @@ namespace ManchkinGameApi.Models.Game.Fight
                 buff = enemy.FightBuff(helperPlayer);
             }
             enemyDmg += buff;
+            foreach (var buffCard in enemy.baffs)
+            {
+                enemyDmg+=buffCard.Buff;
+            }
             return enemyDmg;
         }
-        protected int PlayerDamage(PlayerProfile pp)
+        protected int PlayerDamage(PlayerProfile pp,bool useItems= true)
         {
-           return pp.getDmg();
+           return pp.getDmg(useItems);
         }
 #endregion
     }

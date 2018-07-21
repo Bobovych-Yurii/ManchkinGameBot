@@ -7,7 +7,8 @@ namespace ManchkinGameApi.Models.Game.Player
         Fight = 4,
         WashOut = 8,
         Charity = 16,
-        Iddle = 32
+        Iddle = 32,
+        LookTrable = 64
         //todo set in classes
     }
 }

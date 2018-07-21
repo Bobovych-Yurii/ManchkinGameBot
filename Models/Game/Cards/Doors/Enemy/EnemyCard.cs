@@ -10,9 +10,10 @@ namespace ManchkinGameApi.Models.Game.Cards.Doors
         public int Level;
         public int WinLevelsCount;
         public int WinTresureCount;
-        public Action<PlayerProfile> LostFunction;
+        public Func<PlayerProfile,bool> LostFunction;
         public Func<PlayerProfile,int> FightBuff;  
-        public List<BuffCard> baffs = new List<BuffCard>();
+        public Func<PlayerProfile,int> WasOut;
+        public List<EnemyBuffCard> baffs = new List<EnemyBuffCard>();
         public EnemyCard(string name):base(CardsParamsHendler.GetCard(name)){
             var ep = CardsParamsHendler.GetCard(name) as EnemyParams;
             this.Level = ep.Level;
@@ -20,13 +21,16 @@ namespace ManchkinGameApi.Models.Game.Cards.Doors
             this.WinTresureCount = ep.WinTresureCount;
             this.LostFunction = ep.LostFunction;
             this.FightBuff = ep.FightBuff;
+            this.WasOut = ep.WasOut;
         }
 
         protected override void InPlay(Game game, string PlayerUserName)
         {
-            //todo play with walkig bist
+            if(game.GameState == GameState.LookTrable){
+               game.PlayEnemy(this);
+            }
         }
-        public void AddBuff(BuffCard card)
+        public void AddBuff(EnemyBuffCard card)
         {
             baffs.Add(card);
         }

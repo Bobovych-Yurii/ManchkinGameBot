@@ -19,7 +19,8 @@ namespace ManchkinGameApi.Models.Commands
             var card = CardsList.GetCard(cardId.Current);
             var mainChatId = GamesFactory.GetMainChatId(userName);           
             var game = GamesFactory.GetGame(mainChatId); 
-
+            
+            if(!game.GetProfile(userName).HasCard(card)) throw new DefautlMesageException("У вас нет такой карты");
             card.Play(game,userName);   
             
         }   

@@ -37,6 +37,10 @@ namespace ManchkinGameApi.Models.Game.Cards
         {
             TresureDeck.Remove(tc);
         }
+        public void DoorCardResived(DoorCard dc)
+        {
+            DoorDeck.Remove(dc);
+        }
         public DoorCard GetDoorCard()
         {
             DoorCard dc = DoorDeck[0];

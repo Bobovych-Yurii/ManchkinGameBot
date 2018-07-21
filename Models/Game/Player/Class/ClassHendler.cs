@@ -29,12 +29,15 @@ namespace ManchkinGameApi.Models.Game.Player.Class
             ClassList.Add(ce);
             ClassCardIdList.Add(cardId);
         }
-        public void DropClass(ClassEnum ce,int cardId)
+        public int DropClass(ClassEnum ce)
         {
-            if(ClassList.Contains(ce) && ClassCardIdList.Contains(cardId))
+            if(ClassList.Contains(ce))
             {
+                var cardinListId = ClassList.IndexOf(ce);
+                var cardId = ClassCardIdList[cardinListId];
                 ClassList.Remove(ce);
                 ClassCardIdList.Remove(cardId);
+                return cardId;
             } else {
                 throw new DefautlMesageException("у вас нет такого класса");
             }

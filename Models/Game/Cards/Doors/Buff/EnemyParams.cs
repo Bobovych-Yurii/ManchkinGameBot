@@ -10,16 +10,15 @@ namespace ManchkinGameApi.Models.Game.Cards.Doors
         public int Buff;
         public int WinLevelsCount;
         public int WinTresureCount;
-        public Func<PlayerProfile,bool> BuffCheck;
-
+        
         public EnemyBuffParams(string name,int id,string gameImagePath,CardType ct,GameState gs,
-            CardUsage cu,int buff,int winLevelsCount,int winTresureCount,Func<PlayerProfile,bool> buffCheck)
+            CardUsage cu,int buff,int winLevelsCount,int winTresureCount)
             :base(name,id,gameImagePath,ct,gs,cu)
         {
             this.Buff = buff;
             this.WinLevelsCount = winLevelsCount;
             this.WinTresureCount = winTresureCount;
-            this.BuffCheck = buffCheck;
+            
         }
     }
 }

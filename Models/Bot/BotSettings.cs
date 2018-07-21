@@ -14,7 +14,7 @@ namespace ManchkinGameApi.Models.Bot
     }
     public  class  ManckinHandBotSettings:BotSettings
     {
-        public override string Url {get;set;} ="https://cb51298d.ngrok.io/api/Bot/ManchkinHand/";
+        public override string Url {get;set;} ="https://2225ac7a.ngrok.io/api/Bot/ManchkinHand/";
         public override string Name {get;set;}="manchkinHandBot";
         public override string Key {get;set;}="583959567:AAEtSg-vpaRMhrBFLvlzdDrSF_kSTU583U0";
         public override List<Command> Commands {get;set;}= new List<Command>() 
@@ -26,13 +26,14 @@ namespace ManchkinGameApi.Models.Bot
             new SendBodyEquipment(CommandsInfo.GetHead,BodyPartsEnum.Head),
             new SendBodyEquipment(CommandsInfo.GetHand,BodyPartsEnum.Hand),
             new KickDoor(), new FinishFight(),new CountFight(), new FinishWashOut(),
-            new CallHelp(), new FinishCharity()
+            new CallHelp(), new FinishCharity(), new SellAll(), new UndoSell(),
+            new SellMenu(),new Chouse()
         };
         public override BotEnum BotType {get;set;} = BotEnum.HandBot;
     }
     public  class ManckinGameBotSettings:BotSettings
     {
-        public override string Url {get;set;}="https://cb51298d.ngrok.io/api/Bot/ManchkinGame/";
+        public override string Url {get;set;}="https://2225ac7a.ngrok.io/api/Bot/ManchkinGame/";
         public override string Name {get;set;}="manchkinBot";
         public override string Key {get;set;}="603234017:AAH9XCzApPkfQVuM9RoTe28MnTzJHQ-acMo";
         public override BotEnum BotType {get;set;} = BotEnum.GameBot;

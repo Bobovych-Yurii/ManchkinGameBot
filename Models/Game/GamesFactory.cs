@@ -22,7 +22,7 @@ namespace ManchkinGameApi.Models.Game
         public static void TakeInGamePlace(long chatId,string userName)
         {
             Games[ChatIdLastGameId[chatId]].AddUser(userName);
-            userNameMainChatId.Add(userName,chatId);
+            userNameMainChatId.TryAdd(userName,chatId);
             Console.WriteLine(chatId);
         }
         public static long GetMainChatId(string userName){

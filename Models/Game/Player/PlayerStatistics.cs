@@ -6,5 +6,6 @@ namespace ManchkinGameApi.Models.Game
         public bool IsGenderChanged;
         public bool IsClassChanged;
         public bool IsStartCardsTaken;
+        public bool IsDead;
     }
 }

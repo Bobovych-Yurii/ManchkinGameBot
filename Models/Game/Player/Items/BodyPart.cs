@@ -28,7 +28,7 @@ namespace ManchkinGameApi.Models.Game.Player.Items
         {
            if(items.Remove(ic) == false) throw new DefautlMesageException("У вас нет такой карты"); 
         }
-        public List<ItemCard> getItemsID(){
+        public List<ItemCard> getItems(){
             Console.WriteLine(items.Count+"taken");
             return items;
         }
@@ -41,12 +41,21 @@ namespace ManchkinGameApi.Models.Game.Player.Items
             }
             return dmg;
         }
-        public List<ItemCard> GetLostItem(bool isbig=false,int count=1)
+        public List<ItemCard> GetItems(bool isbig)
         {
             var lostItems = new List<ItemCard>();
             foreach (var item in items)
             {
                 if(item.IsBig == isbig) lostItems.Add(item);
+            }
+            return lostItems;
+        }
+        public List<ItemCard> GetItems()
+        {
+            var lostItems = new List<ItemCard>();
+            foreach (var item in items)
+            {
+                lostItems.Add(item);
             }
             return lostItems;
         }
