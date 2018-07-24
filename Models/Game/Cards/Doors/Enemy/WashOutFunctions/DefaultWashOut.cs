@@ -13,7 +13,7 @@ namespace ManchkinGameApi.Models.Game.Cards.Doors
         public DefaultWashOut(int washout=0,Func<PlayerProfile,bool> isFunc=null)
         {
             if(isFunc == null)
-            isFunc = (PlayerProfile pp)=>{return true};
+            isFunc = (PlayerProfile pp)=>{return true;};
             this.isFunc = isFunc;
             this.washout = washout;
         }

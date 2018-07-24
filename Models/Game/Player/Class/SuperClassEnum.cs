@@ -5,7 +5,6 @@ namespace ManchkinGameApi.Models.Game.Player.Class
     {
         None,
         Super,
-        Cocktail
 
     }
 }

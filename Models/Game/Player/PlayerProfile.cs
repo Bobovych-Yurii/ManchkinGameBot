@@ -37,24 +37,64 @@ namespace ManchkinGameApi.Models.Game.Player
         public PlayerGender GetGender(){
             return Gender;
         }
-        public void SetClass(ClassEnum ce,int cardId)
+        public void SetRace(RaceEnum re,Card card)
         {
-            Class.SetClass(ce,cardId);
-            Statistics.IsClassChanged = true;
+            if(re == RaceEnum.Cocktail)
+               Race.SetCocktail(card);
+            else 
+            {
+                Race.SetRace(re,card.Id);
+            }
         }
-        public void DropClass(ClassEnum ce)
+        public void DropRace(RaceEnum re,int cardId)
         {
-            var cardId = Class.DropClass(ce);
+            if(re == RaceEnum.Cocktail)
+                cardId = Race.DropCocktail();
+            else
+                Race.DropRace(re,cardId);
             var card = CardsList.GetCard(cardId);
             game.ToStock(card);
-            
-            
+        }
+        public void LostRace(){
+            var cardsId = Race.LostRace();
+            foreach(var cardId in cardsId)
+            {
+                var card = CardsList.GetCard(cardId);
+                game.ToStock(card);
+            }
+        }
+        public void SetClass(ClassEnum ce,int cardId)
+        {
+            if(ce == ClassEnum.Super)
+                Class.SetSuperClass(cardId);
+            else 
+            {
+                Class.SetClass(ce,cardId);
+                Statistics.IsClassChanged = true;
+            }
+        }
+        public void LostClass()
+        {   
+            var cardsId = Class.LostClass();
+            foreach(var cardId in cardsId)
+            {
+                var card = CardsList.GetCard(cardId);
+                game.ToStock(card);
+            }
+        }
+        public void DropClass(ClassEnum ce,int cardId)
+        {
+            if(ce == ClassEnum.Super)
+                cardId = Class.DropSupperClass();
+            else
+                Class.DropClass(ce);
+            var card = CardsList.GetCard(cardId);
+            game.ToStock(card);
         }
 #endregion
 #region Items
     public void EquipItem(ItemCard ic)
         {
-            Console.WriteLine(ic.ForRace.ToString("F"));
             if(Class.isClass(ic.ForClass) && Race.isRace(ic.ForRace))
                 Items.EquipItem(ic);
             else

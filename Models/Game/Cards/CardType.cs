@@ -10,6 +10,7 @@ namespace ManchkinGameApi.Models.Game.Cards
         Item = 16 | Tresure,
         Curse = 32 | Door,
         Class = 64 | Tresure,
-        LevelUp = 128 | Tresure
+        LevelUp = 128 | Tresure,
+        Undead = 256 | Enemy
     }
 }

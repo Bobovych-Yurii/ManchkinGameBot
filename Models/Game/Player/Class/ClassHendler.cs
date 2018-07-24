@@ -13,6 +13,40 @@ namespace ManchkinGameApi.Models.Game.Player.Class
         public List<int> ClassCardIdList {get;private set;} = new List<int>();
         public ClassHendler(){
         }
+        public void SetSuperClass(int cardId)
+        {
+            if(SuperClass == SuperClassEnum.None)
+            {
+                SuperClassCardId = cardId;
+                maxClass = 2;
+                SuperClass = SuperClassEnum.Super;
+            } else{ 
+                throw new DefautlMesageException("У вас уже есть");
+            }
+        }
+        public List<int> LostClass()
+        {
+            List<int> cardsId = new List<int>();
+            if(SuperClass == SuperClassEnum.Super)
+            {
+                cardsId.Add(SuperClassCardId);
+            }
+            cardsId.AddRange(ClassCardIdList);
+            return cardsId;
+        }
+        public int DropSupperClass()
+        {
+           if(SuperClass == SuperClassEnum.Super)
+            {
+                maxClass = 1;
+                SuperClass = SuperClassEnum.None;
+                var temp = SuperClassCardId;
+                SuperClassCardId = 0;
+                return temp;
+            } else{ 
+                throw new DefautlMesageException("У вас нет суперкласса");
+            }
+        }
         public void SetClass(ClassEnum ce,int cardId)
         {
             if(ClassList.Count > maxClass) 
@@ -47,12 +81,11 @@ namespace ManchkinGameApi.Models.Game.Player.Class
             bool is_class=false;
             foreach(ClassEnum tempCe in ClassList)
             {
-                Console.WriteLine((tempCe&ce).ToString() +"class");
                 if((tempCe&ce) !=0) is_class = true;            
             }            
             if(badEffect)
             {
-               is_class = SuperClass == SuperClassEnum.Cocktail &&  ClassList.Count == 1 ? false : true;
+               is_class = SuperClass == SuperClassEnum.Super &&  ClassList.Count == 1 ? false : true;
             }
             return is_class;
         }

@@ -19,7 +19,7 @@ namespace ManchkinGameApi.Models.Game
     {
         public long GameId {get;private set;}
         private readonly List<PlayerProfile> players = new List<PlayerProfile>();
-        
+        public RollHendler RollHendler;
         public long ChatId {get;private set;}
         public GameState GameState = GameState.Preparation;
         public Chouse Chouse = new Chouse();
@@ -188,6 +188,7 @@ namespace ManchkinGameApi.Models.Game
             if(fightHendler == null) throw new DefautlMesageException("Сейчас не идет бой");
 
             var result = fightHendler.Finish();
+            Console.WriteLine(result+"win fight");
             if(result)
             { // win
             fightHendler.Win();
@@ -266,6 +267,7 @@ namespace ManchkinGameApi.Models.Game
         public void FinishWashOut(PlayerProfile pp,bool fromLostFunc=false)
         {
             var finish = washOutHandler.Finish(pp,fromLostFunc);
+            Console.WriteLine(finish +"must be true");
             if(finish)
             {
                 pp.SellHendler = new ItemSellHendler(pp);

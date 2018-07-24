@@ -15,7 +15,8 @@ namespace ManchkinGameApi.Models.Game.Fight
         protected List<EnemyCard> ExtraEnemy = new  List<EnemyCard>();
         protected Dictionary<PlayerProfile,bool> ReadyPlayers = new Dictionary<PlayerProfile, bool>();
         protected int extraBuff;
-
+        private bool soloKill = false;
+        private bool noFight = false;
 
         public FightHendler(Game g,PlayerProfile pp,List<PlayerProfile> minorPLayers)
         {
@@ -27,21 +28,25 @@ namespace ManchkinGameApi.Models.Game.Fight
                 ReadyPlayers.Add(player,false);
             }
         }
-        public void SetMonster(EnemyCard ec){enemy = ec;}
+        
+        public void SetMonster(EnemyCard ec)
+        {
+            enemy = ec; 
+        }
         public void SetHelper(PlayerProfile pp)
         {
             this.helperPlayer = pp;
             ReadyPlayers.Remove(pp);
             pp.PlayerState = PlayerState.Fight;
         }
-        public string Count(){ 
+        public string Count()
+        { 
             var message = "";
             var enemyDmg = EnemyDmg();
             var mainDmg = PlayerDamage(fightPlayer);
             var helpDmg=0;
             message += "@"+fightPlayer.UserName + " статы " + mainDmg;
-
-            if(helperPlayer != null)
+            if(helperPlayer != null && isFughtBuffConst(enemy,GameParams.NohelpFightBuff))
             {
                 helpDmg = PlayerDamage(helperPlayer);
                 message+= "\n@"+helperPlayer.UserName+ " статы " + helpDmg;
@@ -51,7 +56,19 @@ namespace ManchkinGameApi.Models.Game.Fight
             message+= "\n\nстаты врагов" + enemyDmg;
             return message;
         }
+        
         public bool Finish(){
+            if(isFughtBuffConst(enemy,GameParams.InstaWinFightBuff))
+            {
+                return true;
+            } 
+            foreach(var exEnemy in ExtraEnemy)
+            {
+                if(isFughtBuffConst(exEnemy,GameParams.InstaWinFightBuff))
+                {
+                    return true;
+                } 
+            }
             foreach (var player in ReadyPlayers)
             {
                if(player.Value == false){
@@ -64,7 +81,7 @@ namespace ManchkinGameApi.Models.Game.Fight
             var enemyDmg = EnemyDmg();
             var mainDmg = PlayerDamage(fightPlayer,false);
             var helpDmg=0;
-            if(helperPlayer != null)
+            if(helperPlayer != null && isFughtBuffConst(enemy,GameParams.NohelpFightBuff))
             {
                 helpDmg = PlayerDamage(helperPlayer);
             }
@@ -104,7 +121,6 @@ namespace ManchkinGameApi.Models.Game.Fight
             }
             fightPlayer.LevelUp(lvls,true);
             
-            Console.WriteLine(treasure+"Tresure");
             for(int i=0;i<treasure;i++)
             {
                 thisGame.PlayerTakeCard(fightPlayer,Cards.CardType.Tresure,ishelperPlayer);
@@ -151,6 +167,15 @@ namespace ManchkinGameApi.Models.Game.Fight
         {
            return pp.getDmg(useItems);
         }
+        private bool isFughtBuffConst(EnemyCard ec,int buffConst)
+        {
+            if(helperPlayer == null)
+                if(ec.FightBuff(fightPlayer)==buffConst)
+                    return true;
+                else if(ec.FightBuff(fightPlayer)==buffConst || ec.FightBuff(helperPlayer)==buffConst )
+                    return true;
+            return false;
+        }       
 #endregion
     }
 }

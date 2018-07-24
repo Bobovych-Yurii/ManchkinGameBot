@@ -73,7 +73,7 @@ namespace ManchkinGameApi.Controllers
             catch(GameExistExeption ex) 
             {  
                 ManchkinGameApi.Exeptions.ErrorSender.SendExeptionMessage(ex.Message,message.Chat.Id,client);
-            } //catch(Exception ex) {Console.WriteLine(ex.Message); } 
+            } 
         }
         
     }

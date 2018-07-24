@@ -25,7 +25,6 @@ namespace ManchkinGameApi.Models.Bot
         {
             if(isTest)
             {
-                Console.WriteLine(chatId+text);
                 return null;
             }
             else

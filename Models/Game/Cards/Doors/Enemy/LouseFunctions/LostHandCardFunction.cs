@@ -12,7 +12,7 @@ namespace ManchkinGameApi.Models.Game.Cards.Doors
         {
             this.count = count;
         }
-        public bool LostItem(PlayerProfile pp)
+        public bool LostHand(PlayerProfile pp)
         {
             pp.LostCard(count);
             return true;

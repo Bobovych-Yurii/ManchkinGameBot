@@ -21,7 +21,6 @@ namespace ManchkinGameApi.Models.Game.Player.Items
         {
             if(ic.ItemSlots+items.Count > maxItemCount) throw new DefautlMesageException("вы не можете надеть эту екипировку\nСнимите какую-то вещь");
             items.Add(ic);
-            Console.WriteLine(ic.Name+" equiped"+items.Count);
             
         }
         public void RemoveItem(ItemCard ic)
@@ -29,7 +28,6 @@ namespace ManchkinGameApi.Models.Game.Player.Items
            if(items.Remove(ic) == false) throw new DefautlMesageException("У вас нет такой карты"); 
         }
         public List<ItemCard> getItems(){
-            Console.WriteLine(items.Count+"taken");
             return items;
         }
         public int getDmg()

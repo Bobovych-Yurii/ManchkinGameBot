@@ -14,9 +14,7 @@ namespace ManchkinGameApi.Models.Commands
         public override  void Execute(Message message,ClientWrapper client){
             var chatId = message.Chat.Id; 
             var userName = message.Chat.Username;
-            var mainChatId = GamesFactory.GetMainChatId(userName); 
-            Console.WriteLine(GamesFactory.GetState(mainChatId).ToString()+
-                "  "+ GamesFactory.GetGame(mainChatId).GetProfile(userName).PlayerState.ToString());  
+            var mainChatId = GamesFactory.GetMainChatId(userName);  
             HandBotFunctions.SendKeyboadrd(chatId,GamesFactory.GetState(mainChatId),
                 GamesFactory.GetGame(mainChatId).GetProfile(userName).PlayerState);//to do get gameState
         }     

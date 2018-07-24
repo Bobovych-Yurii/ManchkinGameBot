@@ -34,10 +34,9 @@ namespace ManchkinGameApi.Models.Commands
             if(message.Length< this.Link.Length+2) throw new DefautlMesageException("неправильная команда");
             int starIndex=message.IndexOf('_')+1;
             int endIndex= message.IndexOf('_',starIndex)==-1 ? message.Length : message.IndexOf('_');
-            Console.WriteLine(message);
+           
             for(int i=0;i<=parameterNum;i++) 
-            {
-                
+            { 
                 yield return Convert.ToInt32(message.Substring(starIndex,endIndex-starIndex));   
                              
                 starIndex = endIndex;

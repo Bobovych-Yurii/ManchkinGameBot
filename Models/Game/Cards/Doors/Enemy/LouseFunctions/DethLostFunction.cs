@@ -11,7 +11,7 @@ namespace ManchkinGameApi.Models.Game.Cards.Doors
         private Func<PlayerProfile,bool> ExeptFunc;
         private Func<PlayerProfile,bool> OtherwiseAction;
         public DethLostFunction(){}
-        public DethLostFunction(Func<PlayerProfile,bool>ExeptFunc,Func<PlayerProfile,bool> OtherwiseAction=null)
+        public DethLostFunction(Func<PlayerProfile,bool>ExeptFunc=null,Func<PlayerProfile,bool> OtherwiseAction=null)
         {
             this.ExeptFunc = ExeptFunc;
             this.OtherwiseAction = OtherwiseAction;

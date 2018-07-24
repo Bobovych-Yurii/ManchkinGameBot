@@ -13,7 +13,6 @@ namespace ManchkinGameApi.Models.Game.Cards.Tresure
         protected override void InPlay(Game game,string playerUserName)
         {
             var pp = game.GetCurrnetPlayer();
-            Console.WriteLine("inPlay"+isPlayerTurn(pp,playerUserName));
             if(isPlayerTurn(pp,playerUserName))
             {
                 pp.LevelUp();

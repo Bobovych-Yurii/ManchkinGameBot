@@ -12,8 +12,10 @@ namespace ManchkinGameApi.Models.Game.Cards
         public int ItemSlots{get;}
         public int DefaultBonus{get;}
         public bool IsBig{get;}
-        public ItemParams(string name,int id,string gameImagePath,CardType ct,GameState gs,
-            CardUsage cu,BodyPartsEnum bp,int slots,ClassEnum forClass,RaceEnum forRace,int price,int defaultBonus,bool isBig)
+        public int WashOut{get;}
+        public ItemParams(string name,int id,string gameImagePath,BodyPartsEnum bp,int slots
+        ,ClassEnum forClass,RaceEnum forRace,int price,int defaultBonus,bool isBig,int washOut=0,
+        CardType ct=CardType.Item,GameState gs = GameState.OwnTurn, CardUsage cu = CardUsage.Self)
             :base(name,id,gameImagePath,ct,gs,cu)
         {
             ForClass = forClass;
@@ -23,6 +25,7 @@ namespace ManchkinGameApi.Models.Game.Cards
             DefaultBonus = defaultBonus;
             ForRace = forRace;
             IsBig = isBig;
+            WashOut = washOut;
         }
     }
 }

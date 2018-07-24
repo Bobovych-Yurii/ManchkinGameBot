@@ -17,8 +17,7 @@ namespace ManchkinGameApi.Models.Game.Cards.Tresure
             if(isPlayerTurn(pp,playerUserName))
             {
                 if(pp.GetGender() == PlayerGender.Mele || (pp.GetPlayerStatistic().IsGenderChanged && pp.GetGender() == PlayerGender.Femele))
-                {
-                    Console.WriteLine("on equip");       
+                {     
                     pp.EquipItem(this);
                 } else {
                     throw new DefautlMesageException("Ваш пол не подходит");

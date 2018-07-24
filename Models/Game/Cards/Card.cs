@@ -24,7 +24,6 @@ namespace ManchkinGameApi.Models.Game.Cards
         }   
         public void Play(Game game,string PlayerUserName)
         {
-            Console.WriteLine(game.GameState + "   "+ game.GameState);
             if((game.GameState&game.GameState) == 0) throw new  DefautlMesageException("нельзя сыграть карту сейчас");
             if(game.GameState == GameState && game.GetCurrnetPlayer().UserName != PlayerUserName) 
                 throw new DefautlMesageException("карту можно использоваь только в свой ход");

@@ -16,7 +16,7 @@ namespace ManchkinGameApi.Models.Game.Fight
         protected int[,] rolls;
         protected int[,] rollsBuff; 
         protected bool[] finish;
-        protected Dictionary<PlayerProfile,int> lostFunctDone;
+        protected Dictionary<PlayerProfile,int> lostFunctDone = new Dictionary<PlayerProfile,int>();
         public WashOutHandler(Game g,List<PlayerProfile> pps,List<EnemyCard> enemiesList)
         {
             thisGame = g;
@@ -29,9 +29,11 @@ namespace ManchkinGameApi.Models.Game.Fight
             
             foreach (var pp in pps)
             {
+                lostFunctDone.Add(pp,0);
                 foreach (var enemy in enemiesList)
                 {
                     Roll(pp,enemy);
+                    
                 }
             }
         }
@@ -62,13 +64,17 @@ namespace ManchkinGameApi.Models.Game.Fight
                             {
                                 lostFunctDone[pp] += 1;
                             }
-                        }                
+                        } 
+                            
                 }
             } else { lostFunctDone[pp] += 1;}
-
-            Console.WriteLine(lostFunctDone[pp]+"enemy count");
-            if(lost & lostFunctDone[pp] == enemies.Count)
-                return AfterFinish(pp);
+            if(lost | lostFunctDone[pp] == enemies.Count)
+            {
+                var temp = AfterFinish(pp); 
+                
+                return temp;
+            }
+                
             return false;
 
         }
@@ -81,6 +87,7 @@ namespace ManchkinGameApi.Models.Game.Fight
             {
                 if(temp == false) return false;
             }
+            
             return true;
         }
        public void Roll(PlayerProfile pp,EnemyCard enemy=null,int preRoll = -1)

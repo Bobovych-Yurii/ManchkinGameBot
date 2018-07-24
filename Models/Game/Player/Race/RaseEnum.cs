@@ -8,6 +8,7 @@ namespace ManchkinGameApi.Models.Game.Player.Race
         Dwarf=2,
         Elf=4,
         Halfling=8,
+        Cocktail = 16,
         Any = Humman | Dwarf | Elf | Halfling  
     }
 }

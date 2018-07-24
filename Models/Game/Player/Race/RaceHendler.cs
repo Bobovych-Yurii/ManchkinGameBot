@@ -5,14 +5,24 @@ namespace ManchkinGameApi.Models.Game.Player.Race
 {
     public class RaceHendler
     {
-        //public SuperClassEnum SuperClass = SuperClassEnum.None;
-        public int CocktailCardId;
+        public CocktailEnum Cokctail = CocktailEnum.None; 
+        public int CocktailCardId=1;
         public int maxRace = 1;
         public List<RaceEnum> RaceList {get;private set;} = new List<RaceEnum>(){RaceEnum.Humman};
         public List<int> RaceCardIdList {get;private set;} = new List<int>();
         public RaceHendler(){
         }
-        public void SetClass(RaceEnum ce,int cardId)
+        public List<int> LostRace()
+        {
+            List<int> cardsId = new List<int>();
+            if(Cokctail == CocktailEnum.Cocktail)
+            {
+                cardsId.Add(CocktailCardId);
+            }
+            cardsId.AddRange(RaceCardIdList);
+            return cardsId;
+        }
+        public void SetRace(RaceEnum ce,int cardId)
         {
             if(RaceList.Count > maxRace) 
                 throw new DefautlMesageException("Збросте класс для взятия нового");
@@ -28,7 +38,7 @@ namespace ManchkinGameApi.Models.Game.Player.Race
             RaceList.Add(ce);
             RaceCardIdList.Add(cardId);
         }
-        public void DropClass(RaceEnum ce,int cardId)
+        public void DropRace(RaceEnum ce,int cardId)
         {
             if(RaceList.Contains(ce) && RaceCardIdList.Contains(cardId))
             {
@@ -39,13 +49,36 @@ namespace ManchkinGameApi.Models.Game.Player.Race
                 throw new DefautlMesageException("у вас нет такой рассы");
             }
         }
+        public int DropCocktail()
+        {
+           if(Cokctail == CocktailEnum.Cocktail)
+            {
+                maxRace = 1;
+                var temp = CocktailCardId;
+                CocktailCardId = -1;
+                Cokctail = CocktailEnum.Cocktail;
+                return temp;
+            } else{ 
+                throw new DefautlMesageException("У вас нет суперкласса");
+            }
+        }
+         public void SetCocktail(Cards.Card card)
+        {
+            if(Cokctail == CocktailEnum.None)
+            {
+                CocktailCardId = card.Id;
+                maxRace = 2;
+                ;
+            } else{ 
+                throw new DefautlMesageException("У вас уже есть");
+            }
+        }
         public bool isRace(RaceEnum ce,bool badEffect = false)
         {
             bool is_Race=false;
             
             foreach(RaceEnum tempCe in RaceList)
             {
-                Console.WriteLine((tempCe&ce).ToString()+"race");
                 if((tempCe&ce) !=0) is_Race = true;            
             }            
             if(badEffect)

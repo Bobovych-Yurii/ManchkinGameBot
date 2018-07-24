@@ -11,8 +11,9 @@ namespace ManchkinGameApi.Models.Game
         private int lastId=-1;
         public void Add(PlayerProfile userId)
         {
-            Players[++lastId] = userId;
-            currentId++;
+            lastId++;
+            Players.Add(userId);
+            currentId=0;
         }
         public PlayerProfile Next()
         {

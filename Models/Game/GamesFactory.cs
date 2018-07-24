@@ -23,15 +23,10 @@ namespace ManchkinGameApi.Models.Game
         {
             Games[ChatIdLastGameId[chatId]].AddUser(userName);
             userNameMainChatId.TryAdd(userName,chatId);
-            Console.WriteLine(chatId);
         }
         public static long GetMainChatId(string userName){
             foreach(var t in userNameMainChatId)
-            Console.WriteLine(t.Value+" "+t.Key);
-            try{
-            return userNameMainChatId[userName];
-            }
-            catch{Console.WriteLine("todo exeption");} //todo
+                return userNameMainChatId[userName];
             return 0;  
         }
         public static GameState GetState(long chatId)
