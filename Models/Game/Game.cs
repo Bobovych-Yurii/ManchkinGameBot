@@ -151,6 +151,10 @@ namespace ManchkinGameApi.Models.Game
                 HandBotFunctions.SendCards(turnQueur.Current().HandBotChatId,new List<Card>(){card},"Вы стажаетесь с","card",
                     HandBotFunctions.GetMainPlayerKeyboard(GameState,turnQueur.Current().PlayerState));
         }
+        public void FingtReadyPlayer(PlayerProfile pp){
+            if(fightHendler == null) throw new DefautlMesageException("Сейчас не идет бой");
+            fightHendler.PlayerReadyFight(pp);
+        }
         public void KickDoor()
         {
             turnQueur.Current().SellHendler.IsEmpty(true);

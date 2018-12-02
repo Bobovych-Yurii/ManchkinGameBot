@@ -4,6 +4,7 @@ using ManchkinGameApi.Models.Game;
 namespace ManchkinGameApi.Models.Commands
 {
     public static partial class CommandsInfo{
+        public static readonly CommandInfo FingtReadyPlayer = new CommandInfo(){Command="Конец боя",StateAllow=GameState.All ,Name="FingtReadyPlayer"};
         public static readonly CommandInfo Hello = new CommandInfo(){Command="/hello",StateAllow=GameState.All ,Name="hello"};
         public static readonly CommandInfo EndGame = new CommandInfo(){Command="/endgame",StateAllow=GameState.All,Name="EndGame"};
         public static readonly CommandInfo NewGame = new CommandInfo(){Command="/newgame",StateAllow=GameState.All,Name="NewGame"};

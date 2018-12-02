@@ -9,3 +9,14 @@ D:\projects\CSharp\ManchkinGameApi\obj\Debug\netcoreapp2.0\ManchkinGameApi.Assem
 D:\projects\CSharp\ManchkinGameApi\obj\Debug\netcoreapp2.0\ManchkinGameApi.AssemblyInfo.cs
 D:\projects\CSharp\ManchkinGameApi\obj\Debug\netcoreapp2.0\ManchkinGameApi.dll
 D:\projects\CSharp\ManchkinGameApi\obj\Debug\netcoreapp2.0\ManchkinGameApi.pdb
+C:\stuff\projects\CSharp\manchkin\ManchkinGameBot\bin\Debug\netcoreapp2.0\ManchkinGameApi.deps.json
+C:\stuff\projects\CSharp\manchkin\ManchkinGameBot\bin\Debug\netcoreapp2.0\ManchkinGameApi.runtimeconfig.json
+C:\stuff\projects\CSharp\manchkin\ManchkinGameBot\bin\Debug\netcoreapp2.0\ManchkinGameApi.runtimeconfig.dev.json
+C:\stuff\projects\CSharp\manchkin\ManchkinGameBot\bin\Debug\netcoreapp2.0\ManchkinGameApi.dll
+C:\stuff\projects\CSharp\manchkin\ManchkinGameBot\bin\Debug\netcoreapp2.0\ManchkinGameApi.pdb
+C:\stuff\projects\CSharp\manchkin\ManchkinGameBot\obj\Debug\netcoreapp2.0\ManchkinGameApi.csprojAssemblyReference.cache
+C:\stuff\projects\CSharp\manchkin\ManchkinGameBot\obj\Debug\netcoreapp2.0\ManchkinGameApi.csproj.CoreCompileInputs.cache
+C:\stuff\projects\CSharp\manchkin\ManchkinGameBot\obj\Debug\netcoreapp2.0\ManchkinGameApi.AssemblyInfoInputs.cache
+C:\stuff\projects\CSharp\manchkin\ManchkinGameBot\obj\Debug\netcoreapp2.0\ManchkinGameApi.AssemblyInfo.cs
+C:\stuff\projects\CSharp\manchkin\ManchkinGameBot\obj\Debug\netcoreapp2.0\ManchkinGameApi.dll
+C:\stuff\projects\CSharp\manchkin\ManchkinGameBot\obj\Debug\netcoreapp2.0\ManchkinGameApi.pdb

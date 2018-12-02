@@ -56,7 +56,11 @@ namespace ManchkinGameApi.Models.Game.Fight
             message+= "\n\nстаты врагов" + enemyDmg;
             return message;
         }
-        
+        public void PlayerReadyFight(PlayerProfile pp)
+        {
+            if(ReadyPlayers.ContainsKey(pp))
+                ReadyPlayers[pp] = true;
+        }
         public bool Finish(){
             if(isFughtBuffConst(enemy,GameParams.InstaWinFightBuff))
             {
@@ -169,11 +173,12 @@ namespace ManchkinGameApi.Models.Game.Fight
         }
         private bool isFughtBuffConst(EnemyCard ec,int buffConst)
         {
-            if(helperPlayer == null)
+            if(helperPlayer == null){
                 if(ec.FightBuff(fightPlayer)==buffConst)
                     return true;
-                else if(ec.FightBuff(fightPlayer)==buffConst || ec.FightBuff(helperPlayer)==buffConst )
-                    return true;
+            }
+            else if(ec.FightBuff(fightPlayer)==buffConst || ec.FightBuff(helperPlayer)==buffConst )
+                return true;
             return false;
         }       
 #endregion

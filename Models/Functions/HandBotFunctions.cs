@@ -202,7 +202,7 @@ namespace ManchkinGameApi.Models.Functions
             case(Game.GameState.Fight):
                 return new KeyboardButton[]
                 {
-                    new KeyboardButton("ready")
+                    new KeyboardButton(Commands.CommandsInfo.FingtReadyPlayer.Command)
                 };
                 
             default:
